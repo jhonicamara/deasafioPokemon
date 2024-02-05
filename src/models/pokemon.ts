@@ -1,25 +1,26 @@
 export interface Pokemon {
-  id: number;
-  name: string;
-  base_experience: number;
-  height: number;
-  is_default: boolean;
-  order: number;
-  weight: number;
-  abilities: Ability[];
-  forms: Species[];
-  game_indices: GameIndex[];
-  held_items: HeldItem[];
-  location_area_encounters: string;
-  moves: Move[];
-  species: Species;
-  sprites: Sprites;
-  stats: Stat[];
-  types: Type[];
-  past_types: PastType[];
+  id?: number;
+  name?: string;
+  url: string;
+  base_experience?: number;
+  height?: number;
+  is_default?: boolean;
+  order?: number;
+  weight?: number;
+  abilities?: Ability[];
+  forms?: Species[];
+  game_indices?: GameIndex[];
+  held_items?: HeldItem[];
+  location_area_encounters?: string;
+  moves?: Move[];
+  species?: Species;
+  sprites?: Sprites;
+  stats?: Stat[];
+  types?: Type[];
+  past_types?: PastType[];
 }
 
-export interface PokemonApiRequest {
+export interface PokemonApiRequestList {
   count: number;
   next?: string;
   previous?: string;

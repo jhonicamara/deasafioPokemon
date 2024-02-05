@@ -1,6 +1,6 @@
 import {FlatList} from 'react-native';
 import styled from 'styled-components/native';
-import {Pokemon} from '../models/pokemon';
+import {Pokemon} from '../../models/pokemon';
 
 export const ScreenContainer = styled.View`
   flex: 1;
@@ -20,4 +20,8 @@ export const PokemonInformationContainer = styled.View``;
 
 export const PokemonNameText = styled.Text`
   color: black;
+`;
+
+export const PokemonImage = styled.Image`
+  height: 100px;
 `;
