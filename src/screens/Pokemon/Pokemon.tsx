@@ -23,6 +23,8 @@ const PokemonScreen: React.FC = () => {
     try {
       setLoading(true);
       setError(false);
+      setPage(1);
+
       const pokemonsFromAPI = await PokemonApi.getPokemons();
 
       setPokemons(pokemonsFromAPI);
