@@ -13,6 +13,10 @@ export default StyleSheet.create({
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
+  pokemonImage: {
+    height: Dimensions.get('screen').height * 0.5,
+    resizeMode: 'contain',
+  },
   pokemonInfoContainer: {
     marginTop: 20,
     paddingHorizontal: 20,

@@ -1,79 +1,96 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+<h3 align="center">
+  <b>Desafio Pokemon</b>
+</h3>
 
-# Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+<p align="center">
+  <a href="#-Sobre-o-projeto">Sobre o projeto</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-Tecnologias">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-getting-started">Executando o projeto</a>
+</p>
 
-## Step 1: Start the Metro Server
+<h1 align="center">
+	<img alt="Demo" src=".github/demo.gif" width="50%" />
+</h1>
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## ⚡ Sobre o desafio
+
+Esta aplicação em React Native tem como objetivo o desenvolvimento de um mini aplicativo que consulta a API pública (https://pokeapi.co/) e exibe os resultados de maneira amigável e interativa.
+
+Aqui estão os principais requisitos do aplicativo:
+
+1. Listagem de Pokémon: Implementação de uma funcionalidade para listar os Pokémons em cards. Essa lista deve ser paginável para facilitar a 
+navegação.
+
+2. Pesquisa por Nome: Permitir a pesquisa de Pokémon pelo nome.
+
+3. Detalhes do Pokémon: Ao clicar em um card, o aplicativo deve exibir os dados básicos do Pokémon.
+
+### Listagem de Pokémon
+Na implementação da listagem de pokémons, optei por utilizar a rota de paginação sugerida pela Pokémon API
+ (https://pokeapi.co/docs/v2#resource-listspagination-section). No entanto, durante essa integração, observei a ausência de informações cruciais sobre os pokémons na resposta da API de listagem, como estatísticas detalhadas e outros atributos relevantes.
+
+Para contornar essa limitação, desenvolvi uma solução ao extrair o ID do Pokémon da URL fornecida pela resposta da API. Com base nesse ID, construí um link para recuperar a imagem correspondente do Pokémon na base de imagens hospedada no GitHub. Essa abordagem visa otimizar o desempenho, eliminando a necessidade de realizar chamadas adicionais à API apenas para obter as imagens dos pokémons.
+
+Entretanto, reconheço que essa estratégia atende apenas parcialmente às necessidades do sistema. A fim de aprimorar a experiência do usuário de maneira abrangente e reduzir a dependência de chamadas adicionais à API, sugiro que o time de backend enriqueça os dados disponíveis na rota de listagem/paginação dos pokémons. Essa expansão de informações não só atenderá aos requisitos específicos da listagem, mas também contribuirá para a eficiência global do sistema, minimizando custos e melhorando a eficácia operacional.
+
+Para a paginação, optei por utilizar o contexto de scroll inifito, visando fazer com que o usuário usasse o aplicativo de forma contínua e proporcionar uma transição suave entre os conjuntos de dados de pokémons, sem a necessidade de ações manuais para carregar páginas adicionais.
+
+Dessa forma, ao integrar o contexto de scroll infinito à paginação, busca-se não apenas manter o usuário imerso na aplicação, mas também garantir uma gestão eficiente dos recursos, promovendo um equilíbrio adequado entre a experiência do usuário e a eficiência operacional do sistema.
+
+### Pesquisa do nome
+Na implementação da pesquisa de nomes de pokémons, identifiquei que a Pokémon API não disponibiliza uma rota específica para essa finalidade. Diante desse cenário, adotei a estratégia de recuperar todos os pokémons disponíveis e, em seguida, realizar a filtragem com base no valor inserido pelo usuário no campo de input.
+
+Com o intuito de evitar chamadas excessivas à API e otimizar o desempenho do sistema, implementei um timeout de 500 milissegundos no momento que o usuário digita algo no input antes de ser feita a requisição.
+
+Essa medida visa evitar requisições consecutivas à API, proporcionando uma gestão mais eficiente das consultas e contribuindo para a estabilidade do aplicativo.
+
+Essa abordagem, embora contorne a ausência de uma rota dedicada para a pesquisa de nomes, busca garantir uma experiência de usuário mais eficaz, equilibrando a obtenção de dados necessários e a minimização de chamadas desnecessárias à API.
+
+### Detalhes do Pokémon
+Na elaboração da funcionalidade de detalhes do Pokémon, criei a dinâmica em que, ao usuário clicar no card de um Pokémon na listagem, ele é redirecionado para uma tela dedicada. Nessa tela, são recuperadas informações específicas do Pokémon selecionado e apresentadas ao usuário, juntamente com a imagem destacada do Pokémon.
+
+Essa abordagem visa oferecer uma experiência mais detalhada e imersiva, permitindo que o usuário explore informações específicas sobre um Pokémon ao clicar em seu card. A integração de uma tela exclusiva para os detalhes proporciona uma apresentação mais organizada e focada, destacando as informações relevantes de forma clara e concisa.
+
+Assim, ao implementar essa funcionalidade, busquei garantir que a transição do usuário para a tela de detalhes fosse intuitiva e enriquecedora, proporcionando uma visualização ampliada das características do Pokémon selecionado.
+
+## 🚀 Tecnologias
+
+Tecnologias utilizadas neste projeto em React Native
+
+- [React Native](https://reactnative.dev/)
+- [React Navigation](https://reactnavigation.org/)
+- [Axios](https://github.com/axios/axios)
+
+## 💻 Executando o projeto
+
+### Requisitos
+
+- Ter Android Studio e o Java Development Kit 17 ou Xcode 15 e as command lines instalada em sua máquina para executar o projeto tanto no Android quanto no IOS.
+
+**Faça o clone do projeto e acesse a pasta**
 
 ```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+$ git clone https://github.com/jhonicamara/desafioPokemon.git desafioPokemon && cd desafioPokemon
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+**Siga os passos a seguir**
 
 ```bash
-# using npm
-npm run android
+# Instale as dependências
+$ yarn
 
-# OR using Yarn
-yarn android
+# Certifique-se que o arquivo src/services/api.js contém o IP da API.
+
+# Se for executar o projeto em um emulador Android, execute este comando:
+$ yarn android
+
+# Se for executar o projeto em um emulador IOS, execute este comando:
+$ yarn ios
+
+# Pronto, projeto executando!
 ```
+---
 
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Feito por João Câmara 👋 [Veja meu Linkedin](www.linkedin.com/in/joaocamara01)

@@ -7,7 +7,7 @@ import {formatPokemonName} from '../utils/formatPokemonName';
 
 export type RootStackParamList = {
   pokemon: undefined;
-  pokemonDetails: {pokemon: string} | undefined;
+  pokemonDetails: {pokemon: string};
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

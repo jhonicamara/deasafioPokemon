@@ -1,155 +1,122 @@
 import React, {useCallback, useEffect, useState} from 'react';
 
-import axios from 'axios';
-import {Pokemon, PokemonApiRequestList} from '../../models/pokemon';
+import {Pokemon} from '../../models/pokemon';
 
-import {
-  FlatList,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../../navigation';
-import {setPokemonImageInDataFromApi} from '../../utils/setPokemonImageInDataFromApi';
+import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+
+import PokemonCard from '../../components/PokemonCard';
 
 import styles from './Pokemon.styles';
-import {formatPokemonName} from '../../utils/formatPokemonName';
-
-import search_icon from '../../assets/search_icon.png';
+import PokemonInput from '../../components/PokemonInput';
+import PokemonApi from '../../repositories/pokemon';
 
 const PokemonScreen: React.FC = () => {
-  const NUMBER_MAX_POKEMONS_API = 750;
-
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [pokemonSearch, setPokemonSearch] = useState('');
   const [page, setPage] = useState(1);
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState(false);
 
   const recoverPokemonsFromApi = useCallback(async () => {
     try {
-      const {
-        data: {results: pokemonsFromApi},
-      } = await axios.get<PokemonApiRequestList>(
-        'https://pokeapi.co/api/v2/pokemon',
-        {
-          params: {
-            limit: 10,
-          },
-        },
-      );
+      setLoading(true);
+      setError(false);
+      const pokemonsFromAPI = await PokemonApi.getPokemons();
 
-      const pokemonsWithImageFromApi =
-        setPokemonImageInDataFromApi(pokemonsFromApi);
-
-      setPokemons(pokemonsWithImageFromApi);
-    } catch (error) {
-      console.error(error);
+      setPokemons(pokemonsFromAPI);
+    } catch (e) {
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   const loadMorePokemons = useCallback(async () => {
     try {
-      const {
-        data: {results: pokemonsFromApi},
-      } = await axios.get<PokemonApiRequestList>(
-        'https://pokeapi.co/api/v2/pokemon',
-        {
-          params: {
-            limit: 10,
-            offset: page * 10,
-          },
-        },
-      );
+      setIsLoadingMore(true);
+      setError(false);
 
-      const pokemonsWithImageFromApi =
-        setPokemonImageInDataFromApi(pokemonsFromApi);
+      const morePokemonsFromAPI = await PokemonApi.loadMorePokemons(page);
 
-      const updatedPokemonsState = [...pokemons, ...pokemonsWithImageFromApi];
+      const updatedPokemonsState = [...pokemons, ...morePokemonsFromAPI];
 
       setPokemons(updatedPokemonsState);
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      setError(true);
+    } finally {
+      setIsLoadingMore(false);
     }
   }, [page, pokemons]);
 
   const searchPokemonsFromApi = useCallback(async () => {
     try {
-      const {
-        data: {results: pokemonsFromApi},
-      } = await axios.get<PokemonApiRequestList>(
-        'https://pokeapi.co/api/v2/pokemon',
-        {
-          params: {
-            limit: NUMBER_MAX_POKEMONS_API,
-          },
-        },
-      );
+      setLoading(true);
+      setError(false);
 
-      const pokemonsSearch = pokemonsFromApi.filter(({name}) =>
-        name?.includes(pokemonSearch),
-      );
+      const pokemonsSearchAPI = await PokemonApi.searchPokemons(pokemonSearch);
 
-      const pokemonsWithImageFromApi =
-        setPokemonImageInDataFromApi(pokemonsSearch);
-
-      setPokemons(pokemonsWithImageFromApi);
-    } catch (error) {
-      console.error(error);
+      setPokemons(pokemonsSearchAPI);
+    } catch (e) {
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   }, [pokemonSearch]);
 
+  const updateTextSearchValue = (value: string) => setPokemonSearch(value);
+
   useEffect(() => {
-    if (pokemonSearch.length > 3) {
-      searchPokemonsFromApi();
-    } else {
-      recoverPokemonsFromApi();
-    }
-  }, [pokemonSearch, recoverPokemonsFromApi, searchPokemonsFromApi]);
+    recoverPokemonsFromApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const delay = 500; // Adjust the delay time as needed
+    const timeoutId = setTimeout(() => {
+      if (pokemonSearch.length > 3) {
+        searchPokemonsFromApi();
+      } else {
+        recoverPokemonsFromApi();
+      }
+    }, delay);
+
+    return () => clearTimeout(timeoutId);
+  }, [pokemonSearch, searchPokemonsFromApi, recoverPokemonsFromApi]);
+
+  if (error) {
+    return (
+      <View style={styles.screenContainer}>
+        <Text>Ocorreu um erro, tente novamente</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screenContainer}>
-      <View style={styles.inputContainer}>
-        <Image source={search_icon} style={styles.inputIcon} />
-        <TextInput
-          placeholder={'Qual Pokémon você está procurando?'}
-          placeholderTextColor="#F3F3F3"
-          cursorColor="#fff"
-          style={{color: '#fff'}}
-          value={pokemonSearch}
-          onChange={e => setPokemonSearch(e.nativeEvent.text)}
-        />
-      </View>
-      {pokemons?.length ? (
-        <FlatList<Pokemon>
-          data={pokemons}
-          renderItem={({item: pokemon}: {item: Pokemon}) => (
-            <TouchableOpacity
-              activeOpacity={0.5}
-              onPress={() =>
-                navigation.navigate('pokemonDetails', {pokemon: pokemon.name})
-              }>
-              <View style={styles.pokemonInformationContainer}>
-                <Image
-                  style={styles.pokemonImage}
-                  source={{uri: pokemon.url}}
-                />
-                <Text style={styles.pokemonNameText}>
-                  {formatPokemonName(pokemon?.name || '')}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          onEndReachedThreshold={0.5}
-          onEndReached={() => {
-            setPage(page + 1);
-            loadMorePokemons();
-          }}
-        />
-      ) : null}
+      <PokemonInput
+        pokemonSearch={pokemonSearch}
+        handlePokemonSearch={updateTextSearchValue}
+      />
+      <FlatList<Pokemon>
+        data={loading ? [] : pokemons}
+        renderItem={({item: pokemon}: {item: Pokemon}) => (
+          <PokemonCard pokemon={pokemon} />
+        )}
+        ListHeaderComponent={
+          loading ? <ActivityIndicator size={'large'} color="#D30A40" /> : null
+        }
+        ListFooterComponent={
+          loadingMore ? (
+            <ActivityIndicator size={'large'} color="#D30A40" />
+          ) : null
+        }
+        onEndReachedThreshold={0.1}
+        onEndReached={() => {
+          setPage(page + 1);
+          loadMorePokemons();
+        }}
+      />
     </View>
   );
 };
