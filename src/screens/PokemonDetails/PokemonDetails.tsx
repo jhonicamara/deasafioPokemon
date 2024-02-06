@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Image, Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 
 import {Pokemon} from '../../models/pokemon';
 
@@ -7,6 +7,8 @@ import styles from './PokemonDetails.styles';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigation';
 import PokemonApi from '../../repositories/pokemon';
+import LoadingIndicator from '../../components/LoadingIndicator';
+import ErrorIndicator from '../../components/ErrorIndicator';
 
 type PokemonScreenRouteProp = RouteProp<RootStackParamList, 'pokemonDetails'>;
 
@@ -38,18 +40,12 @@ const PokemonScreen: React.FC = () => {
 
   if (error) {
     return (
-      <View style={styles.screenContainer}>
-        <Text>Ocorreu um erro, tente novamente</Text>
-      </View>
+      <ErrorIndicator message="Ocorreu um erro, entre na tela novamente!" />
     );
   }
 
   if (loading) {
-    return (
-      <View style={styles.screenContainer}>
-        <ActivityIndicator color="#D30A40" />
-      </View>
-    );
+    return <LoadingIndicator />;
   }
 
   return (

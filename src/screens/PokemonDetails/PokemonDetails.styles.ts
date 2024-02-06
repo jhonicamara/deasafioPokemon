@@ -24,6 +24,7 @@ export default StyleSheet.create({
   pokemonInfoTextContainer: {
     flexDirection: 'row',
     marginBottom: 20,
+    alignItems: 'center',
   },
   pokemonInfoTitleText: {
     fontSize: 18,

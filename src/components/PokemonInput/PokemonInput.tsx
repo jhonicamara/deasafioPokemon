@@ -20,7 +20,7 @@ const PokemonInput: React.FC<PokemonInputProps> = ({
       placeholder={'Qual Pokémon você está procurando?'}
       placeholderTextColor="#F3F3F3"
       cursorColor="#fff"
-      style={{color: '#fff'}}
+      style={styles.textInputStyle}
       value={pokemonSearch}
       onChange={e => handlePokemonSearch(e.nativeEvent.text)}
     />

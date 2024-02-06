@@ -9,6 +9,7 @@ import PokemonCard from '../../components/PokemonCard';
 import styles from './Pokemon.styles';
 import PokemonInput from '../../components/PokemonInput';
 import PokemonApi from '../../repositories/pokemon';
+import LoadingIndicator from '../../components/LoadingIndicator';
 
 const PokemonScreen: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -98,14 +99,12 @@ const PokemonScreen: React.FC = () => {
         pokemonSearch={pokemonSearch}
         handlePokemonSearch={updateTextSearchValue}
       />
+      {loading && <LoadingIndicator />}
       <FlatList<Pokemon>
-        data={loading ? [] : pokemons}
+        data={pokemons}
         renderItem={({item: pokemon}: {item: Pokemon}) => (
           <PokemonCard pokemon={pokemon} />
         )}
-        ListHeaderComponent={
-          loading ? <ActivityIndicator size={'large'} color="#D30A40" /> : null
-        }
         ListFooterComponent={
           loadingMore ? (
             <ActivityIndicator size={'large'} color="#D30A40" />
