@@ -1,27 +1,35 @@
-import {FlatList} from 'react-native';
-import styled from 'styled-components/native';
-import {Pokemon} from '../../models/pokemon';
+import {Dimensions, StyleSheet} from 'react-native';
 
-export const ScreenContainer = styled.View`
-  flex: 1;
-  margin: 20px;
-`;
+export default StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+  },
+  pokemonImageContainer: {
+    flexDirection: 'column',
+    backgroundColor: '#D30A40',
+    paddingHorizontal: 20,
+    height: Dimensions.get('screen').height * 0.5,
 
-export const ScreenTitleText = styled.Text`
-  font-size: 20px;
-  font-weight: 500;
-`;
-
-export const PokemonsList = styled(FlatList as new () => FlatList<Pokemon>)`
-  margin-top: 20px;
-`;
-
-export const PokemonInformationContainer = styled.View``;
-
-export const PokemonNameText = styled.Text`
-  color: black;
-`;
-
-export const PokemonImage = styled.Image`
-  height: 100px;
-`;
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  pokemonInfoContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  pokemonInfoTextContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  pokemonInfoTitleText: {
+    fontSize: 18,
+    fontWeight: '700',
+    minWidth: Dimensions.get('screen').width * 0.5,
+    maxWidth: Dimensions.get('screen').width * 0.5,
+    marginRight: 10,
+  },
+  pokemonInfoText: {
+    fontSize: 16,
+    fontWeight: '400',
+  },
+});

@@ -4,24 +4,29 @@ import axios from 'axios';
 import {Pokemon, PokemonApiRequestList} from '../../models/pokemon';
 
 import {
-  PokemonImage,
-  PokemonInformationContainer,
-  PokemonNameText,
-  PokemonsList,
-  ScreenContainer,
-  ScreenTitleText,
-} from './Pokemon.styles';
-import {TextInput, TouchableOpacity} from 'react-native';
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigation';
-import {formatPokemonDataFromApi} from '../../utils/formatPokemonDatafromApi';
+import {setPokemonImageInDataFromApi} from '../../utils/setPokemonImageInDataFromApi';
+
+import styles from './Pokemon.styles';
+import {formatPokemonName} from '../../utils/formatPokemonName';
+
+import search_icon from '../../assets/search_icon.png';
 
 const PokemonScreen: React.FC = () => {
   const NUMBER_MAX_POKEMONS_API = 750;
 
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [pokemonSearch, setPokemonSearch] = useState('');
+  const [page, setPage] = useState(1);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const recoverPokemonsFromApi = useCallback(async () => {
@@ -38,7 +43,7 @@ const PokemonScreen: React.FC = () => {
       );
 
       const pokemonsWithImageFromApi =
-        formatPokemonDataFromApi(pokemonsFromApi);
+        setPokemonImageInDataFromApi(pokemonsFromApi);
 
       setPokemons(pokemonsWithImageFromApi);
     } catch (error) {
@@ -46,70 +51,106 @@ const PokemonScreen: React.FC = () => {
     }
   }, []);
 
-  const searchPokemonsFromApi = useCallback(
-    async (searchText: string) => {
-      console.log(searchText);
-      try {
-        setPokemonSearch(searchText);
-        if (searchText.length < 3) {
-          return;
-        }
-
-        const {
-          data: {results: pokemonsFromApi},
-        } = await axios.get<PokemonApiRequestList>(
-          'https://pokeapi.co/api/v2/pokemon',
-          {
-            params: {
-              limit: NUMBER_MAX_POKEMONS_API,
-            },
+  const loadMorePokemons = useCallback(async () => {
+    try {
+      const {
+        data: {results: pokemonsFromApi},
+      } = await axios.get<PokemonApiRequestList>(
+        'https://pokeapi.co/api/v2/pokemon',
+        {
+          params: {
+            limit: 10,
+            offset: page * 10,
           },
-        );
+        },
+      );
 
-        const pokemonsSearch = pokemonsFromApi.filter(({name}) =>
-          name?.includes(pokemonSearch),
-        );
+      const pokemonsWithImageFromApi =
+        setPokemonImageInDataFromApi(pokemonsFromApi);
 
-        const pokemonsWithImageFromApi =
-          formatPokemonDataFromApi(pokemonsSearch);
+      const updatedPokemonsState = [...pokemons, ...pokemonsWithImageFromApi];
 
-        setPokemons(pokemonsWithImageFromApi);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [pokemonSearch],
-  );
+      setPokemons(updatedPokemonsState);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [page, pokemons]);
+
+  const searchPokemonsFromApi = useCallback(async () => {
+    try {
+      const {
+        data: {results: pokemonsFromApi},
+      } = await axios.get<PokemonApiRequestList>(
+        'https://pokeapi.co/api/v2/pokemon',
+        {
+          params: {
+            limit: NUMBER_MAX_POKEMONS_API,
+          },
+        },
+      );
+
+      const pokemonsSearch = pokemonsFromApi.filter(({name}) =>
+        name?.includes(pokemonSearch),
+      );
+
+      const pokemonsWithImageFromApi =
+        setPokemonImageInDataFromApi(pokemonsSearch);
+
+      setPokemons(pokemonsWithImageFromApi);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [pokemonSearch]);
 
   useEffect(() => {
-    recoverPokemonsFromApi();
-  }, [recoverPokemonsFromApi]);
+    if (pokemonSearch.length > 3) {
+      searchPokemonsFromApi();
+    } else {
+      recoverPokemonsFromApi();
+    }
+  }, [pokemonSearch, recoverPokemonsFromApi, searchPokemonsFromApi]);
 
   return (
-    <ScreenContainer>
-      <ScreenTitleText>Pokedex</ScreenTitleText>
-      <TextInput
-        placeholder={'Qual Pokémon você está procurando?'}
-        value={pokemonSearch}
-        onChange={e => searchPokemonsFromApi(e.nativeEvent.text)}
-      />
+    <View style={styles.screenContainer}>
+      <View style={styles.inputContainer}>
+        <Image source={search_icon} style={styles.inputIcon} />
+        <TextInput
+          placeholder={'Qual Pokémon você está procurando?'}
+          placeholderTextColor="#F3F3F3"
+          cursorColor="#fff"
+          style={{color: '#fff'}}
+          value={pokemonSearch}
+          onChange={e => setPokemonSearch(e.nativeEvent.text)}
+        />
+      </View>
       {pokemons?.length ? (
-        <PokemonsList
+        <FlatList<Pokemon>
           data={pokemons}
           renderItem={({item: pokemon}: {item: Pokemon}) => (
             <TouchableOpacity
+              activeOpacity={0.5}
               onPress={() =>
                 navigation.navigate('pokemonDetails', {pokemon: pokemon.name})
               }>
-              <PokemonInformationContainer id={pokemon.id?.toString()}>
-                <PokemonImage source={{uri: pokemon.url}} />
-                <PokemonNameText>{pokemon.name}</PokemonNameText>
-              </PokemonInformationContainer>
+              <View style={styles.pokemonInformationContainer}>
+                <Image
+                  style={styles.pokemonImage}
+                  source={{uri: pokemon.url}}
+                />
+                <Text style={styles.pokemonNameText}>
+                  {formatPokemonName(pokemon?.name || '')}
+                </Text>
+              </View>
             </TouchableOpacity>
           )}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            setPage(page + 1);
+            loadMorePokemons();
+          }}
         />
       ) : null}
-    </ScreenContainer>
+    </View>
   );
 };
 

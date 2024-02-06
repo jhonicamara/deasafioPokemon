@@ -1,14 +1,12 @@
 import React from 'react';
-import {Platform, SafeAreaView, StatusBar} from 'react-native';
+import {SafeAreaView, StatusBar} from 'react-native';
 
 import Routes from './navigation';
 
 function App(): React.JSX.Element {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <StatusBar
-        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
-      />
+      <StatusBar barStyle={'light-content'} backgroundColor={'#D30A40'} />
       <Routes />
     </SafeAreaView>
   );

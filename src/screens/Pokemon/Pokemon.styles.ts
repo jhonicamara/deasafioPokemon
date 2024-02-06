@@ -1,27 +1,55 @@
-import {FlatList} from 'react-native';
-import styled from 'styled-components/native';
-import {Pokemon} from '../../models/pokemon';
+import {StyleSheet} from 'react-native';
 
-export const ScreenContainer = styled.View`
-  flex: 1;
-  margin: 20px;
-`;
+export default StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#D30A40',
+    marginHorizontal: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    marginVertical: 20,
+  },
+  inputIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: '500',
+  },
+  pokemonInformationContainer: {
+    flex: 1,
 
-export const ScreenTitleText = styled.Text`
-  font-size: 20px;
-  font-weight: 500;
-`;
+    backgroundColor: '#fff',
 
-export const PokemonsList = styled(FlatList as new () => FlatList<Pokemon>)`
-  margin-top: 20px;
-`;
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 11,
 
-export const PokemonInformationContainer = styled.View``;
+    borderRadius: 20,
 
-export const PokemonNameText = styled.Text`
-  color: black;
-`;
+    margin: 20,
+    paddingBottom: 10,
+  },
+  pokemonImage: {
+    flex: 1,
+    height: 200,
+    resizeMode: 'contain',
+  },
+  pokemonNameText: {
+    fontSize: 30,
+    fontWeight: '700',
 
-export const PokemonImage = styled.Image`
-  height: 100px;
-`;
+    textAlign: 'center',
+  },
+});
