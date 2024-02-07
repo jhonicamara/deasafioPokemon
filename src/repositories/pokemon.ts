@@ -46,7 +46,7 @@ const PokemonApi = {
     });
 
     const pokemonsSearch = pokemonsFromApi.filter(({name}) =>
-      name?.includes(pokemonSearch),
+      name?.includes(pokemonSearch.toLowerCase()),
     );
 
     const pokemonsWithImageFromApi =

@@ -16,7 +16,7 @@ const PokemonScreen: React.FC = () => {
   const [pokemonSearch, setPokemonSearch] = useState('');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [loadingMore, setIsLoadingMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
 
   const recoverPokemonsFromApi = useCallback(async () => {
@@ -37,7 +37,7 @@ const PokemonScreen: React.FC = () => {
 
   const loadMorePokemons = useCallback(async () => {
     try {
-      setIsLoadingMore(true);
+      setLoadingMore(true);
       setError(false);
 
       const morePokemonsFromAPI = await PokemonApi.loadMorePokemons(page);
@@ -48,7 +48,7 @@ const PokemonScreen: React.FC = () => {
     } catch (e) {
       setError(true);
     } finally {
-      setIsLoadingMore(false);
+      setLoadingMore(false);
     }
   }, [page, pokemons]);
 
