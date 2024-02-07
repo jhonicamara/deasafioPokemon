@@ -32,9 +32,11 @@ export default StyleSheet.create({
     minWidth: Dimensions.get('screen').width * 0.5,
     maxWidth: Dimensions.get('screen').width * 0.5,
     marginRight: 10,
+    color: '#000',
   },
   pokemonInfoText: {
     fontSize: 16,
     fontWeight: '400',
+    color: '#000',
   },
 });

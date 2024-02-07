@@ -30,5 +30,6 @@ export default StyleSheet.create({
     fontWeight: '700',
 
     textAlign: 'center',
+    color: '#000',
   },
 });

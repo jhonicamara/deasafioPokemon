@@ -75,13 +75,9 @@ const PokemonScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const delay = 500; // Adjust the delay time as needed
+    const delay = 600;
     const timeoutId = setTimeout(() => {
-      if (pokemonSearch.length > 3) {
-        searchPokemonsFromApi();
-      } else {
-        recoverPokemonsFromApi();
-      }
+      searchPokemonsFromApi();
     }, delay);
 
     return () => clearTimeout(timeoutId);
@@ -112,8 +108,12 @@ const PokemonScreen: React.FC = () => {
             <ActivityIndicator size={'large'} color="#D30A40" />
           ) : null
         }
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.5}
         onEndReached={() => {
+          console.log(pokemonSearch.length);
+          if (pokemonSearch.length) {
+            return;
+          }
           setPage(page + 1);
           loadMorePokemons();
         }}
